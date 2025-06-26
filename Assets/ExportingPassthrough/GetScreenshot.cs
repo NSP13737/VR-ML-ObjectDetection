@@ -5,8 +5,9 @@ using UnityEngine;
 public class GetScreenshot : MonoBehaviour
 {
     private WebCamTexture webCamTexture;
+    public Renderer targetRenderer; // Drag and drop the Quad or Plane here in the Inspector
 
-    void Start()
+    void Start()
     {
         webCamTexture = new WebCamTexture();
         webCamTexture.Play();
@@ -15,17 +16,33 @@ public class GetScreenshot : MonoBehaviour
     void Update()
     {
         // Check for spacebar press
-        if (Input.GetKeyDown(KeyCode.Space))
+        /*
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             foreach (WebCamDevice device in WebCamTexture.devices)
             {
                 Debug.Log(device.name);
             }
-            CaptureScreenshot();
+
+            Texture2D capturedImage = CaptureScreenshot();
+            if (capturedImage != null)
+            {
+                DisplayOnRenderTexture(capturedImage);
+            }
+        }
+        */
+        Texture2D capturedImage = CaptureScreenshot();
+        if (capturedImage != null)
+        {
+            DisplayOnRenderTexture(capturedImage);
         }
     }
 
-    void CaptureScreenshot()
+    /// <summary>
+    /// Captures the current frame from the webcam and returns it as a Texture2D.
+    /// </summary>
+    /// <returns>The captured Texture2D image, or null if the webcam is not playing.</returns>
+    Texture2D CaptureScreenshot()
     {
         if (webCamTexture != null && webCamTexture.isPlaying)
         {
@@ -33,10 +50,40 @@ public class GetScreenshot : MonoBehaviour
             screenshot.SetPixels(webCamTexture.GetPixels());
             screenshot.Apply();
 
-            byte[] imageBytes = screenshot.EncodeToPNG();
-            File.WriteAllBytes(Application.dataPath + "/../SavedScreen.png", imageBytes);
-            // Example placeholder — send imageBytes via UDP here
-            Debug.Log("Screenshot captured and ready for UDP transmission.");
+            // Optional: You can still save the file if you want, but it's no longer the primary purpose.
+            // byte[] imageBytes = screenshot.EncodeToPNG();
+            // File.WriteAllBytes(Application.dataPath + "/../SavedScreen.png", imageBytes);
+
+            Debug.Log("Screenshot captured and returned.");
+            return screenshot;
+        }
+
+        Debug.LogWarning("WebCamTexture is not playing or is null.");
+        return null;
+    }
+
+    /// <summary>
+        /// Displays the given Texture2D on a target Renderer's material.
+        /// </summary>
+        /// <param name="image">The Texture2D to display.</param>
+    void DisplayOnRenderTexture(Texture2D image)
+    {
+        if (targetRenderer != null && image != null)
+        {
+            // Check if the material has a main texture property
+            if (targetRenderer.material.HasProperty("_MainTex"))
+            {
+                targetRenderer.material.mainTexture = image;
+                Debug.Log("Image displayed on render texture.");
+            }
+            else
+            {
+                Debug.LogWarning("Target renderer's material does not have a '_MainTex' property.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Target renderer or image is null. Cannot display texture.");
         }
     }
 }
