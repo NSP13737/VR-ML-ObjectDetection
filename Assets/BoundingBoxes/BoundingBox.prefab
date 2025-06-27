@@ -156,8 +156,8 @@ MonoBehaviour:
   centerOffset: {x: 750, y: 350}
   lineMaterial: {fileID: 2100000, guid: c4f51b3cd04639842a37448c238f1b0f, type: 2}
   parentObjectName: ScreenProjection
-  localZOffset: 10
+  localZOffset: 0
   scaleOffset: 0.01
   textPrefab: {fileID: 4189347832884386692, guid: 1c04b44968277304dad26c409dba1821, type: 3}
-  textOffsetFromBox: {x: 7, y: -3}
-  textSize: 2
+  textOffsetFromBox: {x: 10, y: -2.5}
+  textSize: 1

@@ -24,7 +24,7 @@ public class BoundingBoxManager : MonoBehaviour
             YMax = 564.0f
         });
 
-        // Second object: another person
+        // Second object: a person
         detections.Add(new DetectionResult
         {
             ClassName = "person",
@@ -44,6 +44,94 @@ public class BoundingBoxManager : MonoBehaviour
             YMin = 182.59332275390625f,
             XMax = 706.4411010742188f,
             YMax = 318.6602783203125f
+        });
+
+        // Fourth object: a person
+        detections.Add(new DetectionResult
+        {
+            ClassName = "person",
+            Confidence = 0.8703112602233887f,
+            XMin = 173.59312438964844f,
+            YMin = 227.5321044921875f,
+            XMax = 256.4068298339844f,
+            YMax = 526.1870727539062f
+        });
+
+        // Fifth object: a person
+        detections.Add(new DetectionResult
+        {
+            ClassName = "person",
+            Confidence = 0.8335622549057007f,
+            XMin = 272.2511901855469f,
+            YMin = 288.37445068359375f,
+            XMax = 358.0374450683594f,
+            YMax = 542.0066528320312f
+        });
+
+        // Sixth object: a person
+        detections.Add(new DetectionResult
+        {
+            ClassName = "person",
+            Confidence = 0.8164474964141846f,
+            XMin = 245.52224731445312f,
+            YMin = 301.875244140625f,
+            XMax = 296.55987548828125f,
+            YMax = 499.5787048339844f
+        });
+
+        // Seventh object: a person
+        detections.Add(new DetectionResult
+        {
+            ClassName = "person",
+            Confidence = 0.8156471848487854f,
+            XMin = 116.97859191894531f,
+            YMin = 250.91278076171875f,
+            XMax = 191.30555725097656f,
+            YMax = 516.7891845703125f
+        });
+
+        // Eighth object: an elephant
+        detections.Add(new DetectionResult
+        {
+            ClassName = "elephant",
+            Confidence = 0.742301881313324f,
+            XMin = 243.16664123535156f,
+            YMin = 151.23382568359375f,
+            XMax = 367.0865783691406f,
+            YMax = 241.177001953125f
+        });
+
+        // Ninth object: an elephant
+        detections.Add(new DetectionResult
+        {
+            ClassName = "elephant",
+            Confidence = 0.6554667353630066f,
+            XMin = 220.70343017578125f,
+            YMin = 170.63088989257812f,
+            XMax = 293.80828857421875f,
+            YMax = 240.57081604003906f
+        });
+
+        // Tenth object: a potted plant
+        detections.Add(new DetectionResult
+        {
+            ClassName = "potted plant",
+            Confidence = 0.6257315874099731f,
+            XMin = 1.4457029104232788f,
+            YMin = 363.3796691894531f,
+            XMax = 109.8753433227539f,
+            YMax = 510.4000244140625f
+        });
+
+        // Eleventh object: a handbag
+        detections.Add(new DetectionResult
+        {
+            ClassName = "handbag",
+            Confidence = 0.5272660851478577f,
+            XMin = 115.80669403076172f,
+            YMin = 296.2249450683594f,
+            XMax = 172.86471557617188f,
+            YMax = 391.0787353515625f
         });
     }
 

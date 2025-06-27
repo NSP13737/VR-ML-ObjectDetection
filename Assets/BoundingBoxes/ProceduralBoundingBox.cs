@@ -1,6 +1,7 @@
 using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 using TMPro;
+using static UnityEditor.PlayerSettings;
 
 [RequireComponent(typeof(LineRenderer))]
 public class ProceduralBoundingBox : MonoBehaviour
@@ -30,6 +31,7 @@ public class ProceduralBoundingBox : MonoBehaviour
     private Vector3 topLeftCorner; //used for text placement
 
 
+
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
@@ -39,27 +41,15 @@ public class ProceduralBoundingBox : MonoBehaviour
         textMeshPro = textInstance.GetComponent<TextMeshPro>();
     }
 
-    private void Update()
-    {
-        if (Camera.main != null)
-        {
-            // Make the text look at the camera.
-            // This function automatically handles the up direction.
-            textMeshPro.transform.LookAt(Camera.main.transform);
-
-            // After looking at the camera, we need to flip it around so the text faces the camera.
-            // The text's Z-axis is now pointing at the camera, so we rotate 180 degrees around the Y-axis.
-            textMeshPro.transform.rotation *= Quaternion.Euler(0, 180, 0);
-        }
-    }
-
+    // This method is called to initialize the bounding box.
     public void Initialize(string className, float confidence, float x_min, float x_max, float y_min, float y_max)
     {
+
         // Set up the LineRenderer properties
         lineRenderer.startWidth = lineWidth;
         lineRenderer.endWidth = lineWidth;
-        lineRenderer.useWorldSpace = true;
-        lineRenderer.loop = false;
+        lineRenderer.useWorldSpace = false; // <--- KEY CHANGE: Set to local space
+        lineRenderer.loop = true; // <--- KEY CHANGE: Let the LineRenderer close the loop
 
         // Assign the material
         if (lineMaterial != null)
@@ -74,11 +64,15 @@ public class ProceduralBoundingBox : MonoBehaviour
         UpdateLineRenderer(x_min, x_max, y_min, y_max);
         UpdateText(className, confidence, x_min, y_max);
 
+        transform.position = parentObject.GetComponent<Transform>().position;
+        transform.rotation = parentObject.GetComponent<Transform>().rotation;
+        transform.Rotate(-90f, 0f, 0f);
+
     }
 
 
     /// <summary>
-    /// Updates the LineRenderer to draw a rectangular outline using 5 points.
+    /// Updates the LineRenderer to draw a rectangular outline using 4 points.
     /// The rectangle's corners are defined by the provided min/max x and y coordinates.
     /// The depth (Z-coordinate) is based on the parent object's position.
     /// </summary>
@@ -92,27 +86,20 @@ public class ProceduralBoundingBox : MonoBehaviour
 
         // 1. Define the 4 corner points in the parent's LOCAL coordinate space.
         // We use localZOffset for the Z-coordinate.
-        Vector3 corner1_local = new Vector3((x_min - centerOffset.x) * scaleOffset, localZOffset, (y_min - centerOffset.y) * scaleOffset); // Bottom-left
-        Vector3 corner2_local = new Vector3((x_max - centerOffset.x) * scaleOffset, localZOffset, (y_min - centerOffset.y) * scaleOffset); // Bottom-right
-        Vector3 corner3_local = new Vector3((x_max - centerOffset.x) * scaleOffset, localZOffset, (y_max - centerOffset.y) * scaleOffset); // Top-right
-        Vector3 corner4_local = new Vector3((x_min - centerOffset.x) * scaleOffset, localZOffset, (y_max - centerOffset.y) * scaleOffset); // Top-left
+        Vector3 corner1_local = new Vector3((x_min - centerOffset.x) * scaleOffset, (y_min - centerOffset.y) * scaleOffset, localZOffset); // Bottom-left
+        Vector3 corner2_local = new Vector3((x_max - centerOffset.x) * scaleOffset, (y_min - centerOffset.y) * scaleOffset, localZOffset); // Bottom-right
+        Vector3 corner3_local = new Vector3((x_max - centerOffset.x) * scaleOffset, (y_max - centerOffset.y) * scaleOffset, localZOffset); // Top-right
+        Vector3 corner4_local = new Vector3((x_min - centerOffset.x) * scaleOffset, (y_max - centerOffset.y) * scaleOffset, localZOffset); // Top-left
 
-        // 2. Transform the local points into WORLD coordinates using the parent's transform.
-        // This is the key step that aligns the rectangle with the parent's rotation.
-        Vector3 corner1_world = parentObject.transform.TransformPoint(corner1_local);
-        Vector3 corner2_world = parentObject.transform.TransformPoint(corner2_local);
-        Vector3 corner3_world = parentObject.transform.TransformPoint(corner3_local);
-        topLeftCorner = corner1_world;
-        Vector3 corner4_world = parentObject.transform.TransformPoint(corner4_local);
+        topLeftCorner = corner4_local;
 
-        // 3. Set the 5 points to draw a closed rectangle.
-        // We manually close the loop by repeating the first point.
-        Vector3[] points = new Vector3[5];
-        points[0] = corner1_world;
-        points[1] = corner2_world;
-        points[2] = corner3_world;
-        points[3] = corner4_world;
-        points[4] = corner1_world; // Close the loop
+        // 3. Set the 4 points to draw the rectangle.
+        // The LineRenderer.loop = true property will close the loop for us.
+        Vector3[] points = new Vector3[4]; // <--- KEY CHANGE: Only 4 points needed
+        points[0] = corner1_local;
+        points[1] = corner2_local;
+        points[2] = corner3_local;
+        points[3] = corner4_local;
 
         // 4. Set the positions for the LineRenderer.
         lineRenderer.positionCount = points.Length;
@@ -123,8 +110,6 @@ public class ProceduralBoundingBox : MonoBehaviour
     /// <summary>
     /// Updates the position and content of the text display.
     /// </summary>
-    ///
-
     public void UpdateText(string className, float confidence, float x_min, float y_max)
     {
         if (textMeshPro == null)
@@ -138,18 +123,9 @@ public class ProceduralBoundingBox : MonoBehaviour
 
         // Calculate the local position for the text
         // We'll place it slightly above the top-left corner of the bounding box.
-        // Note: The text is a child, so we use local coordinates.
-        /*
-        Vector3 textLocalPosition = new Vector3(
-            (x_min - centerOffset.x) * scaleOffset,
-            localZOffset + textOffsetFromBox, // Add a small vertical offset
-            (y_max - centerOffset.y) * scaleOffset
-        );
-        */
-        Vector3 textLocalPosition = topLeftCorner; // Getting the location that the bounding box verticie since the other implementation didn't work :(
+        Vector3 textLocalPosition = topLeftCorner;
         textLocalPosition.x += textOffsetFromBox.x;
         textLocalPosition.y += textOffsetFromBox.y;
-
 
 
         // Position the text
@@ -158,7 +134,7 @@ public class ProceduralBoundingBox : MonoBehaviour
         // Optional: Make the text face the camera
         //if (Camera.main != null)
         //{
-           // textMeshPro.transform.rotation = Quaternion.LookRotation(textMeshPro.transform.position - Camera.main.transform.position);
+        //    textMeshPro.transform.rotation = Quaternion.LookRotation(textMeshPro.transform.position - Camera.main.transform.position);
         //}
     }
 }
