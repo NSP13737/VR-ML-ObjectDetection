@@ -10,11 +10,53 @@ public class BoundingBoxManager : MonoBehaviour
 
     private List<GameObject> activeBoxes = new List<GameObject>();
 
+    private List<DetectionResult> detections = new List<DetectionResult>();
+
+    private void Start()
+    {
+        detections.Add(new DetectionResult
+        {
+            ClassName = "person",
+            Confidence = 0.911696195602417f,
+            XMin = 699.1796264648438f,
+            YMin = 248.44227600097656f,
+            XMax = 839.1951904296875f,
+            YMax = 564.0f
+        });
+
+        // Second object: another person
+        detections.Add(new DetectionResult
+        {
+            ClassName = "person",
+            Confidence = 0.8872039914131165f,
+            XMin = 549.8279418945312f,
+            YMin = 332.7102966308594f,
+            XMax = 625.3314819335938f,
+            YMax = 544.033935546875f
+        });
+
+        // Third object: an elephant
+        detections.Add(new DetectionResult
+        {
+            ClassName = "elephant",
+            Confidence = 0.882445216178894f,
+            XMin = 587.4811401367188f,
+            YMin = 182.59332275390625f,
+            XMax = 706.4411010742188f,
+            YMax = 318.6602783203125f
+        });
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown("space"))
         {
-            manuallySpawnBox(0, 5, 0, 6);
+            //manuallySpawnBox(0, 5, 0, 6);
+            foreach (DetectionResult detection in detections)
+            {
+                manuallySpawnBox(detection.ClassName, detection.Confidence, detection.XMin, detection.XMax, detection.YMin, detection.YMax);
+                Debug.Log("Created box");
+            }
             Debug.Log(activeBoxes.Count);
         }
         if (Input.GetKeyDown("d"))
@@ -58,13 +100,11 @@ public class BoundingBoxManager : MonoBehaviour
         }
     }
 
-    public void manuallySpawnBox(float x_min, float x_max, float y_min, float y_max)
+    public void manuallySpawnBox(string className, float confidence, float x_min, float x_max, float y_min, float y_max)
     {
-        string detectedCategory = "test";
-        float detectionCertainty = 0f;
         currentBoxInstance = Instantiate(boundingBoxPrefab, transform.position, Quaternion.identity);
         ProceduralBoundingBox boxScript = currentBoxInstance.GetComponent<ProceduralBoundingBox>();
-        boxScript.Initialize(x_min, x_max, y_min, y_max, detectedCategory, detectionCertainty);
+        boxScript.Initialize(className, confidence, x_min, x_max, y_min, y_max);
 
         activeBoxes.Add(currentBoxInstance);
     }

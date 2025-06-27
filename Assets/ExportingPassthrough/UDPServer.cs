@@ -6,7 +6,7 @@ using System.Net; // Adam & Unity
 using System.Text; //Adam & Unity
 using UnityEngine;
 using UnityEngine.InputSystem.XR; // Unity
-//using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 public class UDPServer : MonoBehaviour
 {
@@ -98,14 +98,15 @@ public class UDPServer : MonoBehaviour
 
                 // Decode and parse control commands
                 string responseData = Encoding.UTF8.GetString(receivedBytes);
-                //UNCOMMENT THIS OUT LATER
-                //var controlValues = JsonConvert.DeserializeObject<Dictionary<string, float>>(responseData);
+                var detectionResults = JsonConvert.DeserializeObject<List<DetectionResult>>(responseData);
 
-                // Update the car's controls based on the received values
-                //UNCOMMENT THIS OUT LATER
-                //steer = controlValues["steering"];
-                //throttle = controlValues["throttle"];
-                //Debug.Log($"Steering: {steer}, Throttle: {throttle}");
+                // EXAMPLE of accessing response data
+                if (detectionResults != null && detectionResults.Count > 0)
+                {
+                    var firstDetection = detectionResults[0];
+                    Debug.Log($"Received detection: Class={firstDetection.ClassName}, Confidence={firstDetection.Confidence}");
+                }
+
             }
         }
         catch (Exception e)
