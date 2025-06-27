@@ -16,6 +16,8 @@ public class GetScreenshot : MonoBehaviour
     void Update()
     {
         // Check for spacebar press
+        
+
         /*
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -36,6 +38,7 @@ public class GetScreenshot : MonoBehaviour
         {
             DisplayOnRenderTexture(capturedImage);
         }
+        
     }
 
     /// <summary>
@@ -44,6 +47,7 @@ public class GetScreenshot : MonoBehaviour
     /// <returns>The captured Texture2D image, or null if the webcam is not playing.</returns>
     Texture2D CaptureScreenshot()
     {
+        //Debug.Log("Webcam is playing " + webCamTexture.isPlaying);
         if (webCamTexture != null && webCamTexture.isPlaying)
         {
             Texture2D screenshot = new Texture2D(webCamTexture.width, webCamTexture.height);
@@ -51,10 +55,12 @@ public class GetScreenshot : MonoBehaviour
             screenshot.Apply();
 
             // Optional: You can still save the file if you want, but it's no longer the primary purpose.
-            // byte[] imageBytes = screenshot.EncodeToPNG();
+            byte[] imageBytes = screenshot.EncodeToPNG();
+
+            //Debug.Log("Image Byte Length " + imageBytes.Length);
             // File.WriteAllBytes(Application.dataPath + "/../SavedScreen.png", imageBytes);
 
-            Debug.Log("Screenshot captured and returned.");
+            //Debug.Log("Screenshot captured and returned.");
             return screenshot;
         }
 
@@ -74,7 +80,7 @@ public class GetScreenshot : MonoBehaviour
             if (targetRenderer.material.HasProperty("_MainTex"))
             {
                 targetRenderer.material.mainTexture = image;
-                Debug.Log("Image displayed on render texture.");
+                //Debug.Log("Image displayed on render texture.");
             }
             else
             {
