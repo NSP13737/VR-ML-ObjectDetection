@@ -2,12 +2,15 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 
-public class GetScreenshot : MonoBehaviour
+public class ScreenshotManager : MonoBehaviour
 {
     private WebCamTexture webCamTexture;
     public Renderer targetRenderer; // Drag and drop the Quad or Plane here in the Inspector
 
-    void Start()
+    byte[] imageBytes = null;
+
+
+  void Start()
     {
         webCamTexture = new WebCamTexture();
         webCamTexture.Play();
@@ -15,24 +18,7 @@ public class GetScreenshot : MonoBehaviour
 
     void Update()
     {
-        // Check for spacebar press
         
-
-        /*
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            foreach (WebCamDevice device in WebCamTexture.devices)
-            {
-                Debug.Log(device.name);
-            }
-
-            Texture2D capturedImage = CaptureScreenshot();
-            if (capturedImage != null)
-            {
-                DisplayOnRenderTexture(capturedImage);
-            }
-        }
-        */
         Texture2D capturedImage = CaptureScreenshot();
         if (capturedImage != null)
         {
@@ -54,10 +40,8 @@ public class GetScreenshot : MonoBehaviour
             screenshot.SetPixels(webCamTexture.GetPixels());
             screenshot.Apply();
 
-            // Optional: You can still save the file if you want, but it's no longer the primary purpose.
-            byte[] imageBytes = screenshot.EncodeToPNG();
+            imageBytes = screenshot.EncodeToPNG();
 
-            //Debug.Log("Image Byte Length " + imageBytes.Length);
             // File.WriteAllBytes(Application.dataPath + "/../SavedScreen.png", imageBytes);
 
             //Debug.Log("Screenshot captured and returned.");
@@ -66,6 +50,13 @@ public class GetScreenshot : MonoBehaviour
 
         Debug.LogWarning("WebCamTexture is not playing or is null.");
         return null;
+    }
+
+    public byte[] GetScreenshotBytes()
+    {
+
+        return imageBytes; 
+    
     }
 
     /// <summary>
