@@ -16,13 +16,14 @@ public class UDPServer : MonoBehaviour
     // Networking
     private string serverIP = "127.0.0.1";
     private int serverPort = 5005;
-    private int maxChunkSize = 65536;
+    //private int maxChunkSize = 65536;
+    private int maxChunkSize = 60000;
     private Socket socket;
     private UdpClient udpClient;
     private IPEndPoint serverEndPoint;
     [SerializeField] private ScreenshotManager screenshotManager;
 
-    private List<DetectionResult> detectionsTest;
+    private List<DetectionResult> detectionsTest = new List<DetectionResult>();
 
 
     private void Start()
@@ -160,6 +161,7 @@ public class UDPServer : MonoBehaviour
     {
         while (true)
         {
+
             // Capture the screen as a texture
             /*RenderTexture targetTexture = frontCamera.targetTexture;
             Texture2D texture2D = new Texture2D(targetTexture.width, targetTexture.height, TextureFormat.RGB24, false);
@@ -175,7 +177,8 @@ public class UDPServer : MonoBehaviour
             byte[] data = Encoding.UTF8.GetBytes(imageBase64);
             // udpClient.Send(data, data.Length, serverEndPoint);*/
 
-            byte[] imageBytes = screenshotManager.GetScreenshotBytes();
+            byte[] imageBytes = screenshotManager.CaptureScreenshot(); // If transmission freq is slower than refresh rate of camera, this will send the same frame to be processed multiple times
+            Debug.Log(imageBytes); 
 
             // Send the image data in chunks
             int bytesSent = 0;
@@ -188,6 +191,7 @@ public class UDPServer : MonoBehaviour
 
                 // Send the chunk to the Python server
                 udpClient.Send(chunk, chunk.Length, serverEndPoint);
+                Debug.Log("Chunk Sent");
 
                 // Move the byte index forward
                 bytesSent += chunkSize;

@@ -394,7 +394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 478f00f267436184cb9692d403f5e9e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transmissionFrequency: 0.1
+  transmissionFrequency: 0.5
   screenshotManager: {fileID: 118418834}
 --- !u!1 &279653168
 GameObject:

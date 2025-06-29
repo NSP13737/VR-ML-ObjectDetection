@@ -7,7 +7,6 @@ public class ScreenshotManager : MonoBehaviour
     private WebCamTexture webCamTexture;
     public Renderer targetRenderer; // Drag and drop the Quad or Plane here in the Inspector
 
-    byte[] imageBytes = null;
 
 
   void Start()
@@ -19,11 +18,11 @@ public class ScreenshotManager : MonoBehaviour
     void Update()
     {
         
-        Texture2D capturedImage = CaptureScreenshot();
+        /*Texture2D capturedImage = DebugCaptureScreenshot();
         if (capturedImage != null)
         {
             DisplayOnRenderTexture(capturedImage);
-        }
+        }*/
         
     }
 
@@ -31,7 +30,7 @@ public class ScreenshotManager : MonoBehaviour
     /// Captures the current frame from the webcam and returns it as a Texture2D.
     /// </summary>
     /// <returns>The captured Texture2D image, or null if the webcam is not playing.</returns>
-    Texture2D CaptureScreenshot()
+    private Texture2D DebugCaptureScreenshot()
     {
         //Debug.Log("Webcam is playing " + webCamTexture.isPlaying);
         if (webCamTexture != null && webCamTexture.isPlaying)
@@ -39,8 +38,7 @@ public class ScreenshotManager : MonoBehaviour
             Texture2D screenshot = new Texture2D(webCamTexture.width, webCamTexture.height);
             screenshot.SetPixels(webCamTexture.GetPixels());
             screenshot.Apply();
-
-            imageBytes = screenshot.EncodeToPNG();
+            Destroy(screenshot);
 
             // File.WriteAllBytes(Application.dataPath + "/../SavedScreen.png", imageBytes);
 
@@ -52,11 +50,20 @@ public class ScreenshotManager : MonoBehaviour
         return null;
     }
 
-    public byte[] GetScreenshotBytes()
+    public byte[] CaptureScreenshot()
     {
+        if (webCamTexture != null && webCamTexture.isPlaying)
+        {
+            Texture2D screenshot = new Texture2D(webCamTexture.width, webCamTexture.height);
+            screenshot.SetPixels(webCamTexture.GetPixels());
+            screenshot.Apply();
+            byte[] imageBytes = screenshot.EncodeToJPG();
+            Destroy(screenshot); // Important to prevent memory leak
+            return imageBytes;
+        }
 
-        return imageBytes; 
-    
+        Debug.LogWarning("WebCamTexture is not playing or is null.");
+        return null;
     }
 
     /// <summary>
