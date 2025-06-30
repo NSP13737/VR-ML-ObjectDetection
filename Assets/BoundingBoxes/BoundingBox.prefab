@@ -152,12 +152,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12948b432a21c4d46b4b52c16b77ea59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineWidth: 0.05
+  lineWidth: 0.01
   centerOffset: {x: 750, y: 350}
   lineMaterial: {fileID: 2100000, guid: c4f51b3cd04639842a37448c238f1b0f, type: 2}
-  parentObjectName: ScreenProjection
+  parentObjectName: ScreenAnchor
   localZOffset: 0
   scaleOffset: 0.01
   textPrefab: {fileID: 4189347832884386692, guid: 1c04b44968277304dad26c409dba1821, type: 3}
   textOffsetFromBox: {x: 10, y: -2.5}
-  textSize: 1
+  textSize: 0.7

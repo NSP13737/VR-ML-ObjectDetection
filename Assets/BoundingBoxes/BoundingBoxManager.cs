@@ -18,8 +18,10 @@ public class BoundingBoxManager : MonoBehaviour
     private void Start()
     {
         //Debug.Log(detections);
+       
     }
 
+    
     private void Update()
     {
         
@@ -27,9 +29,18 @@ public class BoundingBoxManager : MonoBehaviour
 
 
         //only draw new detection boxes on a frame when we get new results (don't want to keep drawing the same result multiple times)
-        if ((isNewDetection(detections, previousDetections)))
+        if (isNewDetection(detections, previousDetections))
         {
             ClearAllBoxes();
+            detections.Add(new DetectionResult
+            {
+                ClassName = "",
+                Confidence = 0f,
+                XMin = 0f,
+                YMin = 0f,
+                XMax = 640,
+                YMax = 480f
+            });
             foreach (DetectionResult detection in detections)
             {
                 manuallySpawnBox(detection.ClassName, detection.Confidence, detection.XMin, detection.XMax, detection.YMin, detection.YMax);
@@ -43,7 +54,7 @@ public class BoundingBoxManager : MonoBehaviour
 
 
         //CODE FOR MANUALLY TESTING
-        if (Input.GetKeyDown("space"))
+        /*if (Input.GetKeyDown("space"))
         {
             //manuallySpawnBox(0, 5, 0, 6);
             foreach (DetectionResult detection in detections)
@@ -57,7 +68,7 @@ public class BoundingBoxManager : MonoBehaviour
         {
             ClearAllBoxes();
             Debug.Log(activeBoxes.Count);
-        }
+        }*/
     }
 
     

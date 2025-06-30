@@ -1,19 +1,24 @@
+using Mono.Cecil.Cil;
 using System.Collections;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScreenshotManager : MonoBehaviour
 {
     private WebCamTexture webCamTexture;
+    private Texture2D displayedImageTexture;
     public Renderer targetRenderer; // Drag and drop the Quad or Plane here in the Inspector
     [SerializeField] private Vector2Int desiredImgRes; //Image resolution to convert to (native is 640 by 480)
 
 
 
-  void Start()
+    void Start()
     {
         webCamTexture = new WebCamTexture();
         webCamTexture.Play();
+
+        
         //Debug.Log("Default webcam resolution | Width: " + webCamTexture.width + " Height: " + webCamTexture.height);
     }
 
@@ -24,6 +29,12 @@ public class ScreenshotManager : MonoBehaviour
         if (capturedImage != null)
         {
             DisplayOnRenderTexture(capturedImage);
+            Destroy(capturedImage);
+            //Debug.Log("Tried to display");
+        }
+        else
+        {
+            //Debug.Log("cap img is null");
         }*/
         
     }
@@ -40,7 +51,7 @@ public class ScreenshotManager : MonoBehaviour
             Texture2D screenshot = new Texture2D(webCamTexture.width, webCamTexture.height);
             screenshot.SetPixels(webCamTexture.GetPixels());
             screenshot.Apply();
-            Destroy(screenshot);
+            
 
             // File.WriteAllBytes(Application.dataPath + "/../SavedScreen.png", imageBytes);
 
@@ -54,8 +65,10 @@ public class ScreenshotManager : MonoBehaviour
 
     public byte[] CaptureScreenshot()
     {
+        
         if (webCamTexture != null && webCamTexture.isPlaying)
         {
+            /* // Code for resizing img from gemini
             // --- 2. Create a temporary RenderTexture for resizing using Graphics.Blit ---
             
             RenderTexture currentRT = RenderTexture.active; // Save the current active RenderTexture to restore it later            
@@ -86,45 +99,52 @@ public class ScreenshotManager : MonoBehaviour
             Debug.Log($"Resized image to {desiredImgRes.x}x{desiredImgRes.y}. Total bytes: {imageBytes.Length}");
 
             return imageBytes;
+        */
 
 
 
 
             //My original code
-            /*Texture2D screenshot = new Texture2D(desiredImgRes.x, desiredImgRes.y);
-            screenshot.SetPixels(webCamTexture.GetPixels());
-            screenshot.Apply();
-            byte[] imageBytes = screenshot.EncodeToJPG();
-            Destroy(screenshot); // Important to prevent memory leak
-            return imageBytes;*/
+            Texture2D temporaryScreenshot = new Texture2D(webCamTexture.width, webCamTexture.height, TextureFormat.RGBA32, false);
+            temporaryScreenshot.SetPixels(webCamTexture.GetPixels());
+            temporaryScreenshot.Apply();
+
+            //GEMINI
+            // Ensure the persistent displayedImageTexture is correctly sized and assigned.
+            // This check handles initial setup or if webcam resolution changes.
+            if (displayedImageTexture == null || displayedImageTexture.width != temporaryScreenshot.width || displayedImageTexture.height != temporaryScreenshot.height)
+            {
+                if (displayedImageTexture != null)
+                {
+                    Destroy(displayedImageTexture); // Destroy the old persistent texture if resizing
+                }
+                displayedImageTexture = new Texture2D(temporaryScreenshot.width, temporaryScreenshot.height, TextureFormat.RGB24, false);
+                targetRenderer.material.mainTexture = displayedImageTexture; // Re-assign if recreated
+                Debug.Log("Persistent display texture re-initialized due to size mismatch or initial setup.");
+            }
+
+            // Copy pixels from the temporary screenshot to the persistent displayedImageTexture.
+            // This ensures the renderer's texture remains valid even after temporaryScreenshot is destroyed.
+            displayedImageTexture.SetPixels(temporaryScreenshot.GetPixels());
+            displayedImageTexture.Apply(); // Apply pixel changes to the persistent display texture.
+
+         
+            byte[] imageBytes = temporaryScreenshot.EncodeToJPG();
+
+            Destroy(temporaryScreenshot); // Important to prevent memory leak
+
+            return imageBytes;
         }
 
         Debug.LogWarning("WebCamTexture is not playing or is null.");
         return null;
     }
 
-    /// <summary>
-        /// Displays the given Texture2D on a target Renderer's material.
-        /// </summary>
-        /// <param name="image">The Texture2D to display.</param>
-    void DisplayOnRenderTexture(Texture2D image)
+
+    IEnumerator ExecuteAfterDelay(float delayInSeconds)
     {
-        if (targetRenderer != null && image != null)
-        {
-            // Check if the material has a main texture property
-            if (targetRenderer.material.HasProperty("_MainTex"))
-            {
-                targetRenderer.material.mainTexture = image;
-                //Debug.Log("Image displayed on render texture.");
-            }
-            else
-            {
-                Debug.LogWarning("Target renderer's material does not have a '_MainTex' property.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("Target renderer or image is null. Cannot display texture.");
-        }
+        yield return new WaitForSeconds(delayInSeconds);
     }
+
+
 }

@@ -256,8 +256,8 @@ public class TCPServer : MonoBehaviour
                     stream.Write(sizeBytes, 0, sizeBytes.Length);
                     stream.Write(imageBytes, 0, imageBytes.Length);
                     stream.Flush();
-                    //ReceiveControlResponse();
-                    Debug.LogError("You commented out the recievecontrol responses function");
+                    ReceiveControlResponse();
+                    
                     transmissionSuccessful = true;
                 }
                 catch (Exception e)
@@ -328,7 +328,7 @@ public class TCPServer : MonoBehaviour
 
     public List<DetectionResult> GetDetectionResults()
     {
-        return detectionsTest;
+        //return detectionsTest;
         return detectionResults;
     }
 

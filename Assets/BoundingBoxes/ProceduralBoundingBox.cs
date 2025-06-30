@@ -19,8 +19,6 @@ public class ProceduralBoundingBox : MonoBehaviour
     [SerializeField] private string parentObjectName;
 
     private GameObject parentObject;
-
-    [SerializeField] private float localZOffset = 0f;
     [SerializeField] private float scaleOffset = 1f;
 
     [Header("Text Settings")]
@@ -86,10 +84,10 @@ public class ProceduralBoundingBox : MonoBehaviour
 
         // 1. Define the 4 corner points in the parent's LOCAL coordinate space.
         // We use localZOffset for the Z-coordinate.
-        Vector3 corner1_local = new Vector3((x_min - centerOffset.x) * scaleOffset, -(y_min - centerOffset.y) * scaleOffset, localZOffset); // Bottom-left
-        Vector3 corner2_local = new Vector3((x_max - centerOffset.x) * scaleOffset, -(y_min - centerOffset.y) * scaleOffset, localZOffset); // Bottom-right
-        Vector3 corner3_local = new Vector3((x_max - centerOffset.x) * scaleOffset, -(y_max - centerOffset.y) * scaleOffset, localZOffset); // Top-right
-        Vector3 corner4_local = new Vector3((x_min - centerOffset.x) * scaleOffset, -(y_max - centerOffset.y) * scaleOffset, localZOffset); // Top-left
+        Vector3 corner1_local = new Vector3((x_min - centerOffset.x) * scaleOffset, -(y_min - centerOffset.y) * scaleOffset, 0); // Bottom-left
+        Vector3 corner2_local = new Vector3((x_max - centerOffset.x) * scaleOffset, -(y_min - centerOffset.y) * scaleOffset, 0); // Bottom-right
+        Vector3 corner3_local = new Vector3((x_max - centerOffset.x) * scaleOffset, -(y_max - centerOffset.y) * scaleOffset, 0); // Top-right
+        Vector3 corner4_local = new Vector3((x_min - centerOffset.x) * scaleOffset, -(y_max - centerOffset.y) * scaleOffset, 0); // Top-left
 
         topLeftCorner = corner1_local;
 
