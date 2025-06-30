@@ -86,12 +86,12 @@ public class ProceduralBoundingBox : MonoBehaviour
 
         // 1. Define the 4 corner points in the parent's LOCAL coordinate space.
         // We use localZOffset for the Z-coordinate.
-        Vector3 corner1_local = new Vector3((x_min - centerOffset.x) * scaleOffset, (y_min - centerOffset.y) * scaleOffset, localZOffset); // Bottom-left
-        Vector3 corner2_local = new Vector3((x_max - centerOffset.x) * scaleOffset, (y_min - centerOffset.y) * scaleOffset, localZOffset); // Bottom-right
-        Vector3 corner3_local = new Vector3((x_max - centerOffset.x) * scaleOffset, (y_max - centerOffset.y) * scaleOffset, localZOffset); // Top-right
-        Vector3 corner4_local = new Vector3((x_min - centerOffset.x) * scaleOffset, (y_max - centerOffset.y) * scaleOffset, localZOffset); // Top-left
+        Vector3 corner1_local = new Vector3((x_min - centerOffset.x) * scaleOffset, -(y_min - centerOffset.y) * scaleOffset, localZOffset); // Bottom-left
+        Vector3 corner2_local = new Vector3((x_max - centerOffset.x) * scaleOffset, -(y_min - centerOffset.y) * scaleOffset, localZOffset); // Bottom-right
+        Vector3 corner3_local = new Vector3((x_max - centerOffset.x) * scaleOffset, -(y_max - centerOffset.y) * scaleOffset, localZOffset); // Top-right
+        Vector3 corner4_local = new Vector3((x_min - centerOffset.x) * scaleOffset, -(y_max - centerOffset.y) * scaleOffset, localZOffset); // Top-left
 
-        topLeftCorner = corner4_local;
+        topLeftCorner = corner1_local;
 
         // 3. Set the 4 points to draw the rectangle.
         // The LineRenderer.loop = true property will close the loop for us.

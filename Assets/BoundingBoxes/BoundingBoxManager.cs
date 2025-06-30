@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 public class BoundingBoxManager : MonoBehaviour
 {
     [SerializeField] private GameObject boundingBoxPrefab;
-    [SerializeField] private UDPServer udpServer;
+    [SerializeField] private TCPServer tcpServer;
 
     private GameObject currentBoxInstance;
 
@@ -23,7 +23,7 @@ public class BoundingBoxManager : MonoBehaviour
     private void Update()
     {
         
-        detections = udpServer.GetDetectionResults(); // Ask the UDP Server script if it has a new set of bounding boxes for us to draw
+        detections = tcpServer.GetDetectionResults(); // Ask the TCP Server script if it has a new set of bounding boxes for us to draw
 
 
         //only draw new detection boxes on a frame when we get new results (don't want to keep drawing the same result multiple times)
